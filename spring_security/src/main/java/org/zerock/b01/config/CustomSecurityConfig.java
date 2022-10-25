@@ -45,6 +45,7 @@ public class CustomSecurityConfig {
                 .tokenValiditySeconds(60*60*24*30);
 
         http.exceptionHandling().accessDeniedHandler(accessDeniedHandler());
+        http.oauth2Login().loginPage("/member/loing");
 
         return http.build();
     }
