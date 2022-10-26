@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -30,6 +31,13 @@ public class Member extends BaseEntity{
     @ElementCollection(fetch = FetchType.LAZY)
     @Builder.Default
     @Enumerated(EnumType.STRING)
+    @CollectionTable(
+            name = "member_roles",
+            joinColumns = @JoinColumn(name = "member_mid"),
+            foreignKey = @ForeignKey(
+                    name = "member_fk",
+                    foreignKeyDefinition = "FOREIGN KEY (member_mid) REFERENCES member(mid) ON DELETE CASCADE")
+    )
     private Set<MemberRole> roleSet = new HashSet<>();
 
 

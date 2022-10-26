@@ -30,11 +30,14 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
+    final static String KAKAO_PWD = "kakao9";
+
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
         ClientRegistration clientRegistration = userRequest.getClientRegistration();
         String clientName = clientRegistration.getClientName();
+        log.info("NAME : " +clientName);
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
         Map<String,Object> paramMap = oAuth2User.getAttributes();
@@ -46,34 +49,33 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 break;
         }
 
-
-
         return generateDTO(email,paramMap);
     }
 
     private OAuth2User generateDTO(String email, Map<String, Object> paramMap) {
         Optional<Member> result = memberRepository.findByEmail(email);
 
-        //해당 이메일 사용자가 없다면
+        //해당 이메일 사용자가 없다면 ,새로운회원으로 저장 oauth2User 구성된 memberSecurityDTO 반환
+        //social 값을 true로해서 소셜가입 이메일로 직접 로그인은 불가능하다
+        //추후 일반 회원으로 전환 할 수 있는 화면제공
         if(result.isEmpty()){
             Member member = Member.builder()
                     .mid(email)
                     .email(email)
-                    .pwd(passwordEncoder.encode("1234"))
+                    .pwd(passwordEncoder.encode(KAKAO_PWD))
                     .social(true)
                     .build();
             member.addRole(MemberRole.USER);
             memberRepository.save(member);
 
             MemberSecurityDTO memberSecurityDTO =
-                    new MemberSecurityDTO(email,"1234",email,true,false,
+                    new MemberSecurityDTO(email,KAKAO_PWD,email,true,false,
                             Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));
             memberSecurityDTO.setProps(paramMap);
 
             return memberSecurityDTO;
 
         }else {
-
             Member member = result.get();
             MemberSecurityDTO memberSecurityDTO =
                     new MemberSecurityDTO(member.getMid(),
