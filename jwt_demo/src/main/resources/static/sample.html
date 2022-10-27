@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Sample Client</h1>
+
+<button class="tokenBtn">TOKEN</button>
+
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+
+    document.querySelector(".tokenBtn").addEventListener("click",()=>{
+        const data = {mid:"apiUser1",pwd:"1234"}
+
+        axios.post("http://localhost:8888/generateToken",data)
+    },false)
+
+</script>
+</body>
+</html>
