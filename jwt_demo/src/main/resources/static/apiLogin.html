@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<button class="tokenBtn btn">TOKEN</button>
+<!--
+ Local Storage : 브라우저에서 데이터를 보관할 수 있는 기능으로 쿠키와 같이 문자열을 보관할 수있습니다.
+                   window객체를 통해 접근 setitem getitem
+ -->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+
+  document.querySelector(".tokenBtn").addEventListener("click",()=>{
+    const data = {mid:"apiUser1",pwd:"1234"}
+
+    axios.post("http://localhost:8888/generateToken",data).then(res=>{
+        const accessToken = res.data.accessToken;
+        const refreshToken = res.data.refreshToken;
+        localStorage.setItem("accessToken",accessToken);
+        localStorage.setItem("refreshToken",refreshToken);
+
+    })
+
+
+  },false)
+
+</script>
+</body>
+</html>

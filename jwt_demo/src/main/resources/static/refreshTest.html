@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<h1>refresh token</h1>
+<h4 class="oldRToken"></h4>
+<h4 class="newRToken"></h4>
+<hr>
+<h1>Access token</h1>
+<h4 class="oldAToken"></h4>
+<h4 class="newAToken"></h4>
+
+<button class="tokenBtn btn">Refresh</button>
+
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+
+    const oldAccessToken = localStorage.getItem("accessToken");
+    const oldRefreshToken = localStorage.getItem("refreshToken");
+
+    document.querySelector(".oldAToken").innerHTML = oldAccessToken;
+    document.querySelector(".oldRToken").innerHTML = oldRefreshToken;
+
+
+
+
+
+    document.querySelector(".tokenBtn").addEventListener("click",()=>{
+        const data = {accessToken:oldAccessToken,refreshToken:oldRefreshToken}
+
+        axios.post("http://localhost:8888/refreshToken",data).then(res=>{
+
+            const newAccessToken = res.data.accessToken;
+            const newRefreshToken = res.data.refreshToken;
+
+            document.querySelector(".newAToken").innerHTML = newAccessToken;
+            document.querySelector(".newRToken").innerHTML = newRefreshToken;
+
+
+        })
+
+
+    },false)
+
+</script>
+</body>
+</html>

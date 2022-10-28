@@ -2,6 +2,7 @@ package com.example.jwt_demo.config;
 
 import com.example.jwt_demo.security.ApiUserDetailsService;
 import com.example.jwt_demo.security.filter.APILoginFilter;
+import com.example.jwt_demo.security.filter.RefreshTokenFilter;
 import com.example.jwt_demo.security.filter.TokenCheckFilter;
 import com.example.jwt_demo.security.handler.ApiLoginSuccessHandler;
 import com.example.jwt_demo.util.JWTUtil;
@@ -66,8 +67,14 @@ public class CustomSecurityConfig {
         http.addFilterBefore(apiLoginFilter, UsernamePasswordAuthenticationFilter.class);
 
 
+        //api ㅅㅣ작하는 모든 경로는 동작
         TokenCheckFilter tokencheck = new TokenCheckFilter(jwtUtil);
         http.addFilterBefore(tokencheck,UsernamePasswordAuthenticationFilter.class);
+
+        //refreshToken 호출 자리
+        http.addFilterBefore(new RefreshTokenFilter(jwtUtil),TokenCheckFilter.class);
+
+
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.csrf().disable();
 
