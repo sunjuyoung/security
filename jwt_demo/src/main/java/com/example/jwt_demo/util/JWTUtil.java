@@ -37,7 +37,7 @@ public class JWTUtil {
         payloads.putAll(valueMap);
 
         //유효기간
-        int time = (60*24)*days;
+        int time = (60*12)*days;
 
         String jwtStr = Jwts.builder()
                 .setHeader(headers)

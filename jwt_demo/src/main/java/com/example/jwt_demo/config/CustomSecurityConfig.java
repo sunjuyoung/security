@@ -2,7 +2,9 @@ package com.example.jwt_demo.config;
 
 import com.example.jwt_demo.security.ApiUserDetailsService;
 import com.example.jwt_demo.security.filter.APILoginFilter;
+import com.example.jwt_demo.security.filter.TokenCheckFilter;
 import com.example.jwt_demo.security.handler.ApiLoginSuccessHandler;
+import com.example.jwt_demo.util.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -28,6 +30,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class CustomSecurityConfig {
 
     private final ApiUserDetailsService apiUserDetailsService;
+    private final JWTUtil jwtUtil;
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -55,7 +58,7 @@ public class CustomSecurityConfig {
         apiLoginFilter.setAuthenticationManager(authenticationManager);
 
         //APiLoginSuccessHandler
-        ApiLoginSuccessHandler successHandler = new ApiLoginSuccessHandler();
+        ApiLoginSuccessHandler successHandler = new ApiLoginSuccessHandler(jwtUtil);
         apiLoginFilter.setAuthenticationSuccessHandler(successHandler);
 
         //apiLoginFilter 위치 조정
@@ -63,8 +66,8 @@ public class CustomSecurityConfig {
         http.addFilterBefore(apiLoginFilter, UsernamePasswordAuthenticationFilter.class);
 
 
-
-
+        TokenCheckFilter tokencheck = new TokenCheckFilter(jwtUtil);
+        http.addFilterBefore(tokencheck,UsernamePasswordAuthenticationFilter.class);
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.csrf().disable();
 
