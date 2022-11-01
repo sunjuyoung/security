@@ -1,12 +1,17 @@
 package com.example.jwt_demo.security.filter;
 
+import com.example.jwt_demo.security.ApiUserDetailsService;
 import com.example.jwt_demo.security.exception.AccessTokenException;
 import com.example.jwt_demo.util.JWTUtil;
 import com.sun.tools.jconsole.JConsoleContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
+import springfox.documentation.spi.service.contexts.SecurityContext;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -22,6 +27,7 @@ public class TokenCheckFilter extends OncePerRequestFilter {
     //accessToken 이 잘못된경우 -
     //accessToken이 오래된 경우
     private final JWTUtil jwtUtil;
+    private final ApiUserDetailsService apiUserDetailsService;
 
 
     @Override
@@ -51,6 +57,12 @@ public class TokenCheckFilter extends OncePerRequestFilter {
             Map<String, Object> payload = jwtUtil.validateToken(tokenStr);
 
             String mid = (String)payload.get("mid");
+
+            UserDetails userDetails = apiUserDetailsService.loadUserByUsername(mid);
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
             filterChain.doFilter(request,response);
         }catch (AccessTokenException e){
             e.sendResponseError(response);

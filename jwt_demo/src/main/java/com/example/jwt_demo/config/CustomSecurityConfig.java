@@ -73,7 +73,7 @@ public class CustomSecurityConfig {
 
 
         //api ㅅㅣ작하는 모든 경로는 동작
-        TokenCheckFilter tokencheck = new TokenCheckFilter(jwtUtil);
+        TokenCheckFilter tokencheck = new TokenCheckFilter(jwtUtil,apiUserDetailsService);
         http.addFilterBefore(tokencheck,UsernamePasswordAuthenticationFilter.class);
 
         //refreshToken 호출 자리
