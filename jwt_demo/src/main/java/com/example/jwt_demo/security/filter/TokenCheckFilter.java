@@ -2,6 +2,7 @@ package com.example.jwt_demo.security.filter;
 
 import com.example.jwt_demo.security.exception.AccessTokenException;
 import com.example.jwt_demo.util.JWTUtil;
+import com.sun.tools.jconsole.JConsoleContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import lombok.extern.log4j.Log4j2;
@@ -37,14 +38,14 @@ public class TokenCheckFilter extends OncePerRequestFilter {
         try {
             String headerStr = request.getHeader("Authorization");
             if(headerStr == null || headerStr.length() < 8){
-                throw new AccessTokenException();
+                throw new AccessTokenException(AccessTokenException.TOKEN_ERROR.UNACCEPT);
             }
 
             //Bearer 생략
             String tokenType = headerStr.substring(0,6);
             String tokenStr =  headerStr.substring(7);
             if(tokenType.equalsIgnoreCase("Bearer") == false){
-                throw new AccessTokenException();
+                throw new AccessTokenException(AccessTokenException.TOKEN_ERROR.BADTYPE);
             }
 
             Map<String, Object> payload = jwtUtil.validateToken(tokenStr);
@@ -52,7 +53,7 @@ public class TokenCheckFilter extends OncePerRequestFilter {
             String mid = (String)payload.get("mid");
             filterChain.doFilter(request,response);
         }catch (AccessTokenException e){
-
+            e.sendResponseError(response);
         }
 
         filterChain.doFilter(request,response);

@@ -24,7 +24,7 @@ class ApiUserRepositoryTest {
     public void test(){
 
         ApiUser apiUser = ApiUser.builder()
-                .mid("apiUser2")
+                .mid("apiUser1")
                 .pwd(passwordEncoder.encode("1234"))
                 .build();
 
