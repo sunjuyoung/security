@@ -32,9 +32,6 @@ public class APILoginFilter extends AbstractAuthenticationProcessingFilter {
             return null;
         }
 
-
-
-
         Map<String,String > jsonData = parseRequestJSON(request);
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(jsonData.get("mid"),jsonData.get("pwd"));
@@ -42,7 +39,6 @@ public class APILoginFilter extends AbstractAuthenticationProcessingFilter {
     }
 
     private Map<String, String> parseRequestJSON(HttpServletRequest request) {
-
         try {
             Reader reader = new InputStreamReader(request.getInputStream());
             Gson gson = new Gson();
