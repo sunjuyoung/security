@@ -27,14 +27,11 @@ public class CustomSocialLoginSuccessHandler implements AuthenticationSuccessHan
 
         MemberSecurityDTO memberSecurityDTO = (MemberSecurityDTO) authentication.getPrincipal();
 
-        if(memberSecurityDTO.isSocial()){
             if(passwordEncoder.matches("kakao9",memberSecurityDTO.getPwd())){
                 response.sendRedirect("/member/modify");
+            }else{
+                response.sendRedirect("/board/list");
             }
-        }else{
-
-            response.sendRedirect("/board/list");
-        }
 
     }
 }
